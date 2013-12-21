@@ -11,8 +11,6 @@
 #import <AVFoundation/AVFoundation.h>
 #import <QuartzCore/QuartzCore.h>
 
-#import "ZBarSDK.h"
-
 #define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
 #define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
@@ -38,6 +36,7 @@
     
     // ZBarSDK Scanning
     @property (nonatomic, strong) ZBarReaderView *readerView; 
+    @property (nonatomic, strong) NSArray *defaultScannerTypes;
 
 @end
 
@@ -61,7 +60,7 @@
         // Pre-iOS 7 support
         if (SYSTEM_VERSION_LESS_THAN(@"7.0"))
         {
-            _codeTypes = @[
+            _defaultScannerTypes = @[
                 @(ZBAR_I25),
                 @(ZBAR_QRCODE),
                 @(ZBAR_EAN8),
@@ -76,11 +75,10 @@
                 @(ZBAR_CODE128),
                 @(ZBAR_CODE93),
             ];
+            _codeTypes = [_defaultScannerTypes copy];
             
             ZBarImageScanner *scanner = [[ZBarImageScanner alloc] init];
-            for (NSNumber *type in _codeTypes) {
-                [scanner setSymbology:[type integerValue] config:ZBAR_CFG_ENABLE to:true];
-            }
+            [self updateZBarScannerTypes];
             _readerView = [[ZBarReaderView alloc] initWithImageScanner:scanner];
             _readerView.readerDelegate = self;
             _readerView.frame = _view.bounds;
@@ -156,6 +154,9 @@
     _highlightView = nil;
 }
 
+
+#pragma mark - Public Methods
+
 /** Start capture session */
 - (void)start
 {
@@ -176,6 +177,29 @@
     }
 }
 
+/** Override setter for codeTypes to update ZBarScanner if needed */
+- (void)setCodeTypes:(NSArray *)codeTypes
+{
+    _codeTypes = codeTypes;
+    
+    if (SYSTEM_VERSION_LESS_THAN(@"7.0")) { // update zbar scanner
+        [self updateZBarScannerTypes];
+    }
+}
+
+
+#pragma mark - Private Methods
+
+/** Update scanner types for ZBarScanner */
+- (void)updateZBarScannerTypes
+{
+    if (self.readerView) {
+        for (NSNumber *type in self.defaultScannerTypes) {
+            [self.readerView.scanner setSymbology:[type integerValue] config:ZBAR_CFG_ENABLE to:[self.codeTypes containsObject:type]];
+        }
+    }
+}
+
 
 #pragma mark - ZBarReaderViewDelegate
 
@@ -183,6 +207,7 @@
      didReadSymbols: (ZBarSymbolSet*) syms
           fromImage: (UIImage*) img
 {
+
     NSString *detectionString = nil;
     for (ZBarSymbol *sym in syms)
 	{

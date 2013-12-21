@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "ZBarSDK.h"
+
 @class SimpleBarCodeScanner;
 @protocol SimpleBarCodeScannerDelegate <NSObject>
 
@@ -25,7 +27,9 @@
     /** Last scanned code */
     @property (nonatomic, copy) NSString *lastCode;
 
-    /** Types of codes to scan, defaults to all */
+    /** Types of codes to scan, defaults to all.
+        When setting this array, make sure to use the appropriate values for your OS version. If in iOS 7 and above, use types from AVMetadataMachineReadableCodeObject, otherwise use ZBar's enums.
+    */
     @property (nonatomic, strong) NSArray *codeTypes;
 
     /** Color of highlight frame, defaults to red */
