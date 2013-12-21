@@ -1,0 +1,3 @@
+[submodule "SimpleBarCodeScanner/ZBar"]
+	path = SimpleBarCodeScanner/ZBar
+	url = git@github.com:carlinyuen/ZBarSDKarmv7s.git
