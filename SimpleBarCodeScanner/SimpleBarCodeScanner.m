@@ -36,7 +36,7 @@
 
 
 /** Initialize scanner with view to be used for displaying the scanning */
-- (id)initWithView:(UIView *)view
+- (id)initWithView:(UIView *)view delegate:(id<SimpleBarCodeScannerDelegate>)delegate
 {
     self = [super init];
     if (self)
@@ -56,13 +56,18 @@
         ];
     
         _view = view;
+        _delegate = delegate;
+        
+        // Highlight View
         _highlightView = [UIView new];
         _highlightView.backgroundColor = [UIColor clearColor];
         _highlightView.layer.borderColor = [[UIColor colorWithRed:1.0 green:0 blue:0 alpha:0.8] CGColor];
         _highlightView.layer.borderWidth = 2.0; 
         _highlightColor = nil;
         _highlightWidth = 0;
+        [_view addSubview:_highlightView];
         
+        // AVCapture Setup
         _session = [[AVCaptureSession alloc] init];
         _device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
         
@@ -80,6 +85,7 @@
 
         _output.metadataObjectTypes = [_output availableMetadataObjectTypes];
 
+        // Capture preview
         _preview = [AVCaptureVideoPreviewLayer layerWithSession:_session];
         _preview.frame = _view.bounds;
         _preview.videoGravity = AVLayerVideoGravityResizeAspectFill;
@@ -96,6 +102,8 @@
     _output = nil;
     [_preview removeFromSuperlayer];
     _preview = nil;
+    [_highlightView removeFromSuperview];
+    _highlightView = nil;
 }
 
 /** Start capture session */

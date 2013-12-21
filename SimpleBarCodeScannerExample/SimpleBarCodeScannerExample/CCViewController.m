@@ -10,22 +10,38 @@
 
 #import "SimpleBarCodeScanner.h"
 
-@interface CCViewController ()
+@interface CCViewController () <SimpleBarCodeScannerDelegate>
 
+    @property (nonatomic, strong) SimpleBarCodeScanner *scanner;
+    
 @end
 
-@implementation CCViewController
+@implementation CCViewController   
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    self.scanner = [[SimpleBarCodeScanner alloc] initWithView:self.view delegate:self];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [self.scanner start];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)scanner:(SimpleBarCodeScanner *)scanner scannedCode:(NSString *)code
+{
+    NSLog(@"Scanned Code: %@", code);
 }
 
 @end

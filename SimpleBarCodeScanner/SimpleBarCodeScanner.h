@@ -34,7 +34,7 @@
     @property (nonatomic, assign) CGFloat highlightWidth; 
 
     /** Initialize scanner with view to be used for displaying the scanning */
-    - (id)initWithView:(UIView *)view;
+    - (id)initWithView:(UIView *)view delegate:(id<SimpleBarCodeScannerDelegate>)delegate;
     
     /** Start capture session */
     - (void)start;
