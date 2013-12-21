@@ -8,6 +8,8 @@
 
 #import "SimpleBarCodeScanner.h"
 
+#import "ZBarSDK.h"
+
 @implementation SimpleBarCodeScanner
 
 @end
