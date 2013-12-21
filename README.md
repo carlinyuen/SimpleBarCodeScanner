@@ -3,12 +3,44 @@ SimpleBarCodeScanner
 
 Simple bar code scanner library that uses both iOS 7 libraries as well as ZBarSDK for iOS 6 and below support. Keywords: Objc, Xcode, iOS, bar codes, scanning.
 
+## Integration
+Super simple. 5 steps:
+
+ 1. Import the header:
+
+		#import "SimpleBarCodeScanner.h"
+
+ 2. Create an instance of the SimpleBarCodeScanner using the view you want to
+   preview in and a delegate for when codes are scanned:
+
+		self.scanner = [[SimpleBarCodeScanner alloc] initWithView:self.view delegate:self];
+
+ 3. Start the scanner whenever you're ready:
+
+		[self.scanner start];
+
+ 4. Implement the delegate method:
+
+		- (void)scanner:(SimpleBarCodeScanner *)scanner scannedCode:(NSString *)code
+		{
+			NSLog(@"Scanned Code: %@", code);
+			[self.scanner stop];	// If you want to stop the session
+		}
+
+ 5. Finally, add required libraries in the next section. See notes if you need
+   pre-iOS 7 scanning too.
+
 ### Required Libraries / Frameworks
  - AVFoundation.framework (for ZBarSDK & iOS 7, status optional)
  - QuartzCore.framework (for ZBarSDK, status required)
  - CoreMedia.framework (for ZBarSDK, status optional)
  - CoreVideo.framework (for ZBarSDK, status optional)
  - libiconv.dylib (forZBarSDK, status required)
+
+### Customization
+You can customize the highlight view (it's just a UIView with clear background
+and colored border) by setting <pre>highlightColor</pre> and
+<pre>highlightWidth</pre>.
 
 ### ZBarSDK Notes
  - If scanning in pre-iOS 7 is important, check integration notes for the ZBarSDK 
