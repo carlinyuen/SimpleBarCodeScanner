@@ -62,10 +62,9 @@
         _highlightView = [UIView new];
         _highlightView.backgroundColor = [UIColor clearColor];
         _highlightView.layer.borderColor = [[UIColor colorWithRed:1.0 green:0 blue:0 alpha:0.8] CGColor];
-        _highlightView.layer.borderWidth = 2.0; 
+        _highlightView.layer.borderWidth = 4.0; 
         _highlightColor = nil;
         _highlightWidth = 0;
-        [_view addSubview:_highlightView];
         
         // AVCapture Setup
         _session = [[AVCaptureSession alloc] init];
@@ -140,7 +139,7 @@
                 [(AVMetadataMachineReadableCodeObject *)metadata stringValue];
                 
             if (detectionString != nil) {
-                foundCode = true;
+                foundCode = ![detectionString isEqualToString:self.lastCode];
                 break;
             }
         }
@@ -154,12 +153,13 @@
         self.highlightView.layer.borderColor = [self.highlightColor CGColor];
     }
        
-    // Animate highlightview
-    [UIView animateWithDuration:0.2 delay:0 
+    // Show highlightview
+    [self.view addSubview:self.highlightView]; 
+    [UIView animateWithDuration:0.1 delay:0 
         options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut 
         animations:^{
             self.highlightView.frame = highlightViewRect; 
-            self.highlightView.alpha = (foundCode) ? 1 : 0;
+            self.highlightView.alpha = (detectionString) ? 1 : 0;
         } 
         completion:^(BOOL finished) {
             if (foundCode) 

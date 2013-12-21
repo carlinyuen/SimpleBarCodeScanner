@@ -12,6 +12,7 @@
 @protocol SimpleBarCodeScannerDelegate <NSObject>
 
 	@required
+    /** Scanner will call this method when it scans a code, and it won't call this again if it scans the same code twice in a row. */
 	- (void)scanner:(SimpleBarCodeScanner *)scanner scannedCode:(NSString *)code;
 
 @end
@@ -30,7 +31,7 @@
     /** Color of highlight frame, defaults to red */
     @property (nonatomic, strong) UIColor *highlightColor;
     
-    /** Width of border of highlight frame, default = 2.0 */
+    /** Width of border of highlight frame, defaults to 4.0 */
     @property (nonatomic, assign) CGFloat highlightWidth; 
 
     /** Initialize scanner with view to be used for displaying the scanning */
