@@ -3,6 +3,11 @@ SimpleBarCodeScanner
 
 Simple bar code scanner library that uses both iOS 7 libraries as well as ZBarSDK for iOS 6 and below support. Keywords: Objc, Xcode, iOS, bar codes, scanning.
 
+When cloning this repo, you'll notice I use a (git submodule)[http://git-scm.com/book/en/Git-Tools-Submodules], to initialize those real fast, just run these in the root folder after cloning:
+
+ 1. <code>git submodule init</code> to initialize your local configuration file
+ 2. <code>git submodule update</code> to fetch all the data from that project and check out the appropriate commit listed in your superproject
+
 ## Integration
 Super simple. 5 steps:
 
