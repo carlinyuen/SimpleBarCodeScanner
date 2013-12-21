@@ -39,8 +39,8 @@ Super simple. 5 steps:
 
 ### Customization
 You can customize the highlight view (it's just a UIView with clear background
-and colored border) by setting <pre>highlightColor</pre> and
-<pre>highlightWidth</pre>.
+and colored border) by setting <code>highlightColor</code> and
+<code>highlightWidth</code>.
 
 ### ZBarSDK Notes
  - If scanning in pre-iOS 7 is important, check integration notes for the ZBarSDK 
