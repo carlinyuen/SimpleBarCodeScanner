@@ -38,7 +38,12 @@ Super simple. 5 steps:
  - libiconv.dylib (forZBarSDK, status required)
 
 ### Customization
-You can customize the highlight view in iOS 7 (it's just a UIView with clear background
+You can set the types of codes to scan for (for iOS 7 and below), by setting the
+<code>codeTypes</code> property. However, make sure you use the right types for
+your particular OS: for iOS 7 please use types from AVMetadataMachineReadableCodeObject,
+and for pre-iOS 7 use the enums from ZBarSDK.
+
+You can also customize the highlight view in iOS 7 (it's just a UIView with clear background
 and colored border) by setting <code>highlightColor</code> and
 <code>highlightWidth</code>. Unfortunately pre-iOS 7 uses the ZBarSDK and
 customizing the highlight is unavailable there.
