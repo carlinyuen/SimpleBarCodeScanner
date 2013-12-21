@@ -42,6 +42,7 @@
 - (void)scanner:(SimpleBarCodeScanner *)scanner scannedCode:(NSString *)code
 {
     NSLog(@"Scanned Code: %@", code);
+    [self.scanner stop];
 }
 
 @end

@@ -41,6 +41,10 @@
     self = [super init];
     if (self)
     {
+        _view = view;
+        _delegate = delegate;
+         
+        // Defaults
         _lastCode = nil;
         _codeTypes = @[
             AVMetadataObjectTypeAztecCode, 
@@ -54,17 +58,14 @@
             AVMetadataObjectTypeQRCode, 
             AVMetadataObjectTypeUPCECode,   
         ];
+        _highlightColor = nil;
+        _highlightWidth = 0; 
     
-        _view = view;
-        _delegate = delegate;
-        
         // Highlight View
         _highlightView = [UIView new];
         _highlightView.backgroundColor = [UIColor clearColor];
         _highlightView.layer.borderColor = [[UIColor colorWithRed:1.0 green:0 blue:0 alpha:0.8] CGColor];
         _highlightView.layer.borderWidth = 4.0; 
-        _highlightColor = nil;
-        _highlightWidth = 0;
         
         // AVCapture Setup
         _session = [[AVCaptureSession alloc] init];
@@ -162,9 +163,11 @@
             self.highlightView.alpha = (detectionString) ? 1 : 0;
         } 
         completion:^(BOOL finished) {
-            if (foundCode) 
+            if (finished && foundCode) 
             {
                 self.lastCode = detectionString; // Update last code scanned   
+                
+                // Notify delegate
                 if (self.delegate) {
                     [self.delegate scanner:self scannedCode:self.lastCode];
                 }
