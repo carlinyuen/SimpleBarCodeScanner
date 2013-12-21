@@ -38,9 +38,10 @@ Super simple. 5 steps:
  - libiconv.dylib (forZBarSDK, status required)
 
 ### Customization
-You can customize the highlight view (it's just a UIView with clear background
+You can customize the highlight view in iOS 7 (it's just a UIView with clear background
 and colored border) by setting <code>highlightColor</code> and
-<code>highlightWidth</code>.
+<code>highlightWidth</code>. Unfortunately pre-iOS 7 uses the ZBarSDK and
+customizing the highlight is unavailable there.
 
 ### ZBarSDK Notes
  - If scanning in pre-iOS 7 is important, check integration notes for the ZBarSDK 

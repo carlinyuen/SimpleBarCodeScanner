@@ -13,8 +13,16 @@
 
 #import "ZBarSDK.h"
 
+#define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
+#define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
+
+
 @interface SimpleBarCodeScanner() <
-    AVCaptureMetadataOutputObjectsDelegate
+    AVCaptureMetadataOutputObjectsDelegate,
+    ZBarReaderViewDelegate
 >
     
     /** View to display scanning in */
@@ -29,6 +37,7 @@
     @property (nonatomic, strong) AVCaptureVideoPreviewLayer *preview;   
     
     // ZBarSDK Scanning
+    @property (nonatomic, strong) ZBarReaderView *readerView; 
 
 @end
 
@@ -46,76 +55,152 @@
          
         // Defaults
         _lastCode = nil;
-        _codeTypes = @[
-            AVMetadataObjectTypeAztecCode, 
-            AVMetadataObjectTypeCode128Code, 
-            AVMetadataObjectTypeCode39Code, 
-            AVMetadataObjectTypeCode39Mod43Code,
-            AVMetadataObjectTypeCode93Code, 
-            AVMetadataObjectTypeEAN13Code, 
-            AVMetadataObjectTypeEAN8Code,  
-            AVMetadataObjectTypePDF417Code, 
-            AVMetadataObjectTypeQRCode, 
-            AVMetadataObjectTypeUPCECode,   
-        ];
         _highlightColor = nil;
-        _highlightWidth = 0; 
-    
-        // Highlight View
-        _highlightView = [UIView new];
-        _highlightView.backgroundColor = [UIColor clearColor];
-        _highlightView.layer.borderColor = [[UIColor colorWithRed:1.0 green:0 blue:0 alpha:0.8] CGColor];
-        _highlightView.layer.borderWidth = 4.0; 
+        _highlightWidth = 0;  
         
-        // AVCapture Setup
-        _session = [[AVCaptureSession alloc] init];
-        _device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-        
-        NSError *error = nil;
-        _input = [AVCaptureDeviceInput deviceInputWithDevice:_device error:&error];
-        if (_input) {
-            [_session addInput:_input];
-        } else {
-            NSLog(@"Error Initializing Bar Code Scanner: %@", error);
+        // Pre-iOS 7 support
+        if (SYSTEM_VERSION_LESS_THAN(@"7.0"))
+        {
+            _codeTypes = @[
+                @(ZBAR_I25),
+                @(ZBAR_QRCODE),
+                @(ZBAR_EAN8),
+                @(ZBAR_UPCE),
+                @(ZBAR_ISBN10),
+                @(ZBAR_UPCA),
+                @(ZBAR_EAN13),
+                @(ZBAR_ISBN13),
+                @(ZBAR_DATABAR),
+                @(ZBAR_DATABAR_EXP),
+                @(ZBAR_CODE39),
+                @(ZBAR_CODE128),
+                @(ZBAR_CODE93),
+            ];
+            
+            ZBarImageScanner *scanner = [[ZBarImageScanner alloc] init];
+            for (NSNumber *type in _codeTypes) {
+                [scanner setSymbology:[type integerValue] config:ZBAR_CFG_ENABLE to:true];
+            }
+            _readerView = [[ZBarReaderView alloc] initWithImageScanner:scanner];
+            _readerView.readerDelegate = self;
+            _readerView.frame = _view.bounds;
+            [_view addSubview:_readerView];
         }
+        else    // iOS 7
+        {
+            _codeTypes = @[
+                AVMetadataObjectTypeAztecCode, 
+                AVMetadataObjectTypeCode128Code, 
+                AVMetadataObjectTypeCode39Code, 
+                AVMetadataObjectTypeCode39Mod43Code,
+                AVMetadataObjectTypeCode93Code, 
+                AVMetadataObjectTypeEAN13Code, 
+                AVMetadataObjectTypeEAN8Code,  
+                AVMetadataObjectTypePDF417Code, 
+                AVMetadataObjectTypeQRCode, 
+                AVMetadataObjectTypeUPCECode,   
+            ];
+        
+            // Highlight View
+            _highlightView = [UIView new];
+            _highlightView.backgroundColor = [UIColor clearColor];
+            _highlightView.layer.borderColor = [[UIColor colorWithRed:1.0 green:0 blue:0 alpha:0.8] CGColor];
+            _highlightView.layer.borderWidth = 4.0; 
+            
+            // AVCapture Setup
+            _session = [[AVCaptureSession alloc] init];
+            _device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+            
+            NSError *error = nil;
+            _input = [AVCaptureDeviceInput deviceInputWithDevice:_device error:&error];
+            if (_input) {
+                [_session addInput:_input];
+            } else {
+                NSLog(@"Error Initializing Bar Code Scanner: %@", error);
+            }
 
-        _output = [[AVCaptureMetadataOutput alloc] init];
-        [_output setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
-        [_session addOutput:_output];
+            _output = [[AVCaptureMetadataOutput alloc] init];
+            [_output setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
+            [_session addOutput:_output];
 
-        _output.metadataObjectTypes = [_output availableMetadataObjectTypes];
+            _output.metadataObjectTypes = [_output availableMetadataObjectTypes];
 
-        // Capture preview
-        _preview = [AVCaptureVideoPreviewLayer layerWithSession:_session];
-        _preview.frame = _view.bounds;
-        _preview.videoGravity = AVLayerVideoGravityResizeAspectFill;
-        [_view.layer addSublayer:_preview];
+            // Capture preview
+            _preview = [AVCaptureVideoPreviewLayer layerWithSession:_session];
+            _preview.frame = _view.bounds;
+            _preview.videoGravity = AVLayerVideoGravityResizeAspectFill;
+            [_view.layer addSublayer:_preview];
+        }
     }
     return self;
 }
 
 - (void)dealloc
 {
-    [_session stopRunning];
+    if (_session) {
+        [_session stopRunning];
+    }
     _session = nil;
+    
     _input = nil;
     _output = nil;
-    [_preview removeFromSuperlayer];
+    
+    if (_preview) {
+        [_preview removeFromSuperlayer];
+    }
     _preview = nil;
-    [_highlightView removeFromSuperview];
+    
+    if (_highlightView) {
+        [_highlightView removeFromSuperview];
+    }
     _highlightView = nil;
 }
 
 /** Start capture session */
 - (void)start
 {
-    [self.session startRunning];
+    if (self.readerView) {
+        [self.readerView start]; 
+    } else if (self.session) {
+        [self.session startRunning];
+    }
 }
 
 /** Stop capture session */
 - (void)stop
 {
-    [self.session stopRunning];
+    if (self.readerView) {
+        [self.readerView stop]; 
+    } else if (self.session) {
+        [self.session stopRunning];
+    }
+}
+
+
+#pragma mark - ZBarReaderViewDelegate
+
+- (void) readerView: (ZBarReaderView*) view
+     didReadSymbols: (ZBarSymbolSet*) syms
+          fromImage: (UIImage*) img
+{
+    NSString *detectionString = nil;
+    for (ZBarSymbol *sym in syms)
+	{
+        detectionString = sym.data;
+        
+        // Only notify the delegate if wasn't scanned last time
+        if (detectionString && ![detectionString isEqualToString:self.lastCode])
+        {
+            self.lastCode = detectionString;
+        
+            // Notify delegate
+            if (self.delegate) {
+                [self.delegate scanner:self scannedCode:sym.data];
+            }
+        }
+        
+        break;  // Break on first symbol found 
+    }
 }
 
 
@@ -162,7 +247,9 @@
             self.highlightView.frame = highlightViewRect; 
             self.highlightView.alpha = (detectionString) ? 1 : 0;
         } 
-        completion:^(BOOL finished) {
+        completion:^(BOOL finished) 
+        {
+            // Wait for animation to finish, and notify if new code
             if (finished && foundCode) 
             {
                 self.lastCode = detectionString; // Update last code scanned   
