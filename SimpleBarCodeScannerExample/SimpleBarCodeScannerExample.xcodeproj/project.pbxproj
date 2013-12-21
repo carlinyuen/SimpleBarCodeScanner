@@ -22,6 +22,7 @@
 		2239EA1D1866139B002C0552 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2239EA1B1866139B002C0552 /* InfoPlist.strings */; };
 		2239EA1F1866139B002C0552 /* SimpleBarCodeScannerExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2239EA1E1866139B002C0552 /* SimpleBarCodeScannerExampleTests.m */; };
 		2239EA2A186613EF002C0552 /* SimpleBarCodeScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = 2239EA29186613EF002C0552 /* SimpleBarCodeScanner.m */; };
+		2239EA2D1866175E002C0552 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2239EA2C1866175E002C0552 /* AVFoundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		2239EA1E1866139B002C0552 /* SimpleBarCodeScannerExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimpleBarCodeScannerExampleTests.m; sourceTree = "<group>"; };
 		2239EA28186613EF002C0552 /* SimpleBarCodeScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleBarCodeScanner.h; path = ../SimpleBarCodeScanner/SimpleBarCodeScanner.h; sourceTree = "<group>"; };
 		2239EA29186613EF002C0552 /* SimpleBarCodeScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SimpleBarCodeScanner.m; path = ../SimpleBarCodeScanner/SimpleBarCodeScanner.m; sourceTree = "<group>"; };
+		2239EA2C1866175E002C0552 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2239EA2D1866175E002C0552 /* AVFoundation.framework in Frameworks */,
 				2239E9F61866139B002C0552 /* CoreGraphics.framework in Frameworks */,
 				2239E9F81866139B002C0552 /* UIKit.framework in Frameworks */,
 				2239E9F41866139B002C0552 /* Foundation.framework in Frameworks */,
@@ -105,6 +108,7 @@
 		2239E9F21866139B002C0552 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2239EA2C1866175E002C0552 /* AVFoundation.framework */,
 				2239E9F31866139B002C0552 /* Foundation.framework */,
 				2239E9F51866139B002C0552 /* CoreGraphics.framework */,
 				2239E9F71866139B002C0552 /* UIKit.framework */,
