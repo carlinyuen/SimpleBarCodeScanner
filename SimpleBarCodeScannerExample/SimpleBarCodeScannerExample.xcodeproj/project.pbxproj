@@ -537,7 +537,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SimpleBarCodeScannerExample/SimpleBarCodeScannerExample-Prefix.pch";
 				INFOPLIST_FILE = "SimpleBarCodeScannerExample/SimpleBarCodeScannerExample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/macbookpro7/Documents/Personal/SimpleBarCodeScanner/SimpleBarCodeScanner/ZBar/ZBarSDK,
@@ -555,7 +555,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SimpleBarCodeScannerExample/SimpleBarCodeScannerExample-Prefix.pch";
 				INFOPLIST_FILE = "SimpleBarCodeScannerExample/SimpleBarCodeScannerExample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/macbookpro7/Documents/Personal/SimpleBarCodeScanner/SimpleBarCodeScanner/ZBar/ZBarSDK,
