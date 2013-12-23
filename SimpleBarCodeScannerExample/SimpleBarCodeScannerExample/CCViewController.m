@@ -10,7 +10,9 @@
 
 #import "SimpleBarCodeScanner.h"
 
-@interface CCViewController () <SimpleBarCodeScannerDelegate>
+@interface CCViewController () <SimpleBarCodeScannerDelegate
+    , UIAlertViewDelegate
+>
 
     @property (nonatomic, strong) SimpleBarCodeScanner *scanner;
     
@@ -42,7 +44,16 @@
 - (void)scanner:(SimpleBarCodeScanner *)scanner scannedCode:(NSString *)code
 {
     NSLog(@"Scanned Code: %@", code);
-    [self.scanner stop];
+    [self.scanner stop]; 
+    [[[UIAlertView alloc] initWithTitle:@"Code Scanned" message:code delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+}
+
+
+#pragma mark - UIAlertViewDelegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    [self.scanner start];
 }
 
 @end

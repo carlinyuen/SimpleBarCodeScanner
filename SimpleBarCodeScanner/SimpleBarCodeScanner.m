@@ -277,11 +277,16 @@
             // Wait for animation to finish, and notify if new code
             if (finished && foundCode) 
             {
-                self.lastCode = detectionString; // Update last code scanned   
-                
-                // Notify delegate
-                if (self.delegate) {
-                    [self.delegate scanner:self scannedCode:self.lastCode];
+                bool isNewCode = ![self.lastCode isEqualToString:detectionString];
+                if (isNewCode)
+                {
+                    // Update last code scanned   
+                    self.lastCode = detectionString; 
+                    
+                    // Notify delegate
+                    if (self.delegate) {
+                        [self.delegate scanner:self scannedCode:self.lastCode];
+                    }
                 }
             } 
         }];
